@@ -4,19 +4,21 @@ from starkware.cairo.common.bitwise import bitwise_and, bitwise_xor
 from starkware.cairo.common.cairo_builtins import BitwiseBuiltin, HashBuiltin
 
 
-from exercises.ex6_new import pattern
+from exercises.ex6_new import pattern, masking
 
 @external
 func test_proxy_contract{syscall_ptr : felt*, range_check_ptr, bitwise_ptr: BitwiseBuiltin*}():
     
     alloc_locals      
         
-    let (p8) = pattern(n = 99)
+    # let (p8) = pattern(n = 99, idx = 0, exp = 0)
+
+    masking(masked = 1)
 
     ## Solution
-    %{ 
-        print(f"returned value: {ids.p8}")      
-    %}     
+    # %{ 
+    #     print(f"returned value: {ids.p8}")      
+    # %}     
   
     return ()
 end
