@@ -1,15 +1,22 @@
-# %builtins output 
-## if I leave ^ in it will fiob
-## tests/test_utils.cairo:8:36: Unexpected implicit argument 'range_check_ptr' in an external function.
 %lang starknet
-
-
-## I AM NOT DONE
 
 from starkware.cairo.common.serialize import serialize_word
 
-func main{output_ptr : felt*}():
-    serialize_word(1234)
-    serialize_word(4321)
-    return ()
+## I AM NOT DONE
+
+# Create a function that accepts a parameter and logs it
+func logValue(y : felt):      
+
+   # Create a function to add one to a value  
+   %{ 
+        print(f"passed value: {ids.y}")
+      # print("\n\n666666\n\n")
+   %}
+
+   let u = 9
+
+   return ()   
 end
+
+
+

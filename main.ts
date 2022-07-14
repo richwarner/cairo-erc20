@@ -1,6 +1,8 @@
 const { promisify } = require("util");
 const exec = promisify(require("child_process").exec);
 var spawn = require("child_process").spawn;
+var spawnSync = require("child_process").spawnSync;
+var execSync = require("child_process").execSync;
 var path = require("path");
 const fs = require("fs").promises;
 const stat = require("fs").promises;
@@ -154,7 +156,7 @@ const tutorialLogic = {
         console.log(`${err}`);
       }
     }
-
+    console.log("Returning pathContent");
     return pathContent;
   },
 
@@ -178,30 +180,78 @@ const tutorialLogic = {
     // find matching test to run
     const testCommand: string = "test/" + test_name;
 
-    let child = await spawn("protostar", ["test", testCommand]);
+    // let child = await spawnSync("protostar", ["test", testCommand], {
+    //   encoding: "utf8",
+    // });
+
+    console.log("\nwill invoke shell command programticlly");
+
+    console.log("test command: ", testCommand);
+
+    let child = await spawn(
+      "protostar",
+      ["test", testCommand, "--disable-hint-validation"],
+      {
+        encoding: "utf8",
+      }
+    );
+    //
+    // var result = execSync(`protostar test ${testCommand}`, {
+    //   maxBuffer: 2000 * 1024,
+    // }).toString();
+
+    // child.stdout.pipe(process.stdout);
 
     let data = "";
 
-    // log as the tests get deployed
-    for await (const chunk of child.stdout) {
-      console.log("" + chunk);
-      // console.log(chunk.toString);
-      data += chunk;
-    }
-    let error = "";
-    for await (const chunk of child.stderr) {
-      console.error("stderr chunk: " + chunk);
-      console.error("chunk");
-      error += chunk;
-    }
-    const exitCode = await new Promise((resolve, reject) => {
-      child.on("close", resolve);
+    // console.log("result: ", result);
+
+    // child.stdout.on("data", function(chunk: any) {
+    //   console.log("\n\nreceived chunk \n\n", chunk.toString());
+    // });
+
+    // child.stderr.on("data", function(chunk: any) {
+    //   console.log("\n\nreceived eerrr \n\n", chunk.toString());
+    // });
+
+    child.stderr.on("data", (data: any) => {
+      console.log("[1]data start decoded:\n", data.toString(), "\ndata end\n");
+      console.log("[1]data start encoded:\n", data, "\ndata end\n\n");
     });
 
-    if (exitCode) {
-      // throw new Error( `subprocess error exit ${exitCode}, ${error}`);
-      return false;
-    }
+    child.stdout.on("data", (data: any) => {
+      console.log("\n[2]data start:\n", data.toString(), "\ndata end [d]\n");
+      console.log("\n[2]data start:\n", data, "\ndata end [d]\n");
+    });
+
+    // // log as the tests get deployed
+    // for await (const chunk of child.stdout) {
+    //   // console.log("RRR" + chunk);
+    //   // console.log(chunk.toString);
+    //   // data += chunk;
+    // }
+    // let error = "";
+    // for await (const chunk of child.stderr) {
+    //   console.error("stderr chunk: " + chunk);
+    //   // console.error("chunk");
+    //   // error += chunk;
+    // }
+    // const exitCode = await new Promise((resolve, reject) => {
+    //   child.on("close", resolve);
+    // });
+
+    // console.log("Process finished.");
+    // if (child.error) {
+    //   console.log("ERROR: ", child.error);
+    // }
+    // console.log("stdout: ", child.stdout);
+    // console.log("stderr: ", child.stderr);
+    // console.log("exist code: ", child.status);
+
+    // if (exitCode) {
+    //   // throw new Error( `subprocess error exit ${exitCode}, ${error}`);
+    //   return false;
+    // }
 
     return true;
   },
@@ -234,6 +284,7 @@ const tutorialLogic = {
     await fs.writeFile(targetFile, await fs.readFile(source));
   },
 
+  // to do update this for cairo
   clearPreviousArtifacts: async function() {
     exec(
       "npx hardhat clean",
@@ -303,51 +354,53 @@ const tutorialLogic = {
     startPoint: number = 0
   ): Promise<progress | null> {
     // loop over themed directories
-    const themes: any[] = await tutorialLogic.getPathContent(exerciseDirectory);
+    const exercises: any[] = await tutorialLogic.getPathContent(
+      exerciseDirectory
+    );
 
     let prog: progress | null = null;
 
     // loop over alpahebitcally
-    for (let exDir = startPoint; exDir < themes.length; exDir++) {
+    // for (let exDir = startPoint; exDir < themes.length; exDir++) {
+    //   console.log(
+    //     `themes[exDir]['path'] + "/" + themes[exDir].name:`,
+    //     themes[exDir].path + "/" + themes[exDir].name
+    //   );
+
+    //   // const exercises = await tutorialLogic.getPathContent(
+    //   //   themes[exDir].path + "/" + themes[exDir].name
+    //   // );
+
+    //   console.log("\n\ntheme ex: ", exercises);
+
+    // loop over exercise files
+    for (let ex = 0; ex < exercises.length; ex++) {
       console.log(
-        `themes[exDir]['path'] + "/" + themes[exDir].name:`,
-        themes[exDir].path + "/" + themes[exDir].name
+        "exercises[ex]['path'] + '/' + exercises[ex].name: ",
+        exercises[ex].path + "/" + exercises[ex].name,
+        ":  ",
+        exercises[ex].type.substr(0, exercises[ex].type.indexOf(" "))
       );
 
-      const exercises = await tutorialLogic.getPathContent(
-        themes[exDir].path + "/" + themes[exDir].name
-      );
+      // get file type
+      let ft = exercises[ex].type.substr(0, exercises[ex].type.indexOf(" "));
 
-      console.log("\n\ntheme ex: ", exercises);
+      console.log("ft: ", ft);
 
-      // loop over exercise files
-      for (let ex = 0; ex < exercises.length; ex++) {
-        console.log(
-          "exercises[ex]['path'] + '/' + exercises[ex].name: ",
-          exercises[ex].path + "/" + exercises[ex].name,
-          ":  ",
-          exercises[ex].type.substr(0, exercises[ex].type.indexOf(" "))
-        );
+      // get compound path
+      let comp = exercises[ex].path + "/" + exercises[ex].name + "." + ft;
 
-        // get file type
-        let ft = exercises[ex].type.substr(0, exercises[ex].type.indexOf(" "));
-
-        console.log("ft: ", ft);
-
-        // get compound path
-        let comp = exercises[ex].path + "/" + exercises[ex].name + "." + ft;
-
-        if (
-          ft == "cairo" &&
-          (await tutorialLogic.checkFileFinished(
-            exercises[ex].path + "/" + exercises[ex].name + "." + ft
-          )) == false
-        ) {
-          console.log("ex finished");
-          prog = exercises[ex];
-          return prog;
-        }
+      if (
+        ft == "cairo" &&
+        (await tutorialLogic.checkFileFinished(
+          exercises[ex].path + "/" + exercises[ex].name + "." + ft
+        )) == false
+      ) {
+        console.log("ex finished");
+        prog = exercises[ex];
+        return prog;
       }
+      // }
     }
 
     return prog;
@@ -359,3 +412,5 @@ async function runTutorialLogic() {
 }
 
 runTutorialLogic();
+
+// TODO  remove contract laoding into a sperate file since not necessry for protostar

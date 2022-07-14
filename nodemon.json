@@ -1,6 +1,6 @@
 {
   "verbose": false,
   "watch": ["./exercises"],
-  "ext": "js, json, ts, proto, sol",
+  "ext": "js, json, ts, cairo",
   "exec": "npx ts-node main.ts"
 }

@@ -1,13 +1,22 @@
 %lang starknet
 
-## I AM NOT DONE
-
 from starkware.cairo.common.serialize import serialize_word
 
-# Create a function to add one to a value
-# It should take one parameter called 
+## I AM NOT DONE
 
-func addOne(y : felt) -> (bit : felt):
-   return (y + 1)
+# Create a function that accepts a parameter and logs it
+func logValue(y : felt):      
+
+   # Create a hint that logs to console value of y
+
+
+   ## Solution
+   # %{ 
+   #    print(f"passed value: {ids.y}")      
+   # %}   
+
+   return ()   
 end
+
+
 

@@ -4,10 +4,11 @@
 
 from starkware.cairo.common.serialize import serialize_word
 
-# Create a function to add one to a value
-# It should take one parameter called 
-
+# Create a function to add one to the value passed
 func addOne(y : felt) -> (bit : felt):
+
+   ## uncomment this
    return (y + 1)
 end
+
 

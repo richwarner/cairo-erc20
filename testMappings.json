@@ -1,9 +1,3 @@
 {
-  "ex1": "test_ex1.cairo",
-  "ex2": "test_ex2.cairo",
-  "ex3": "test_ex3.cairo",
-  "ex4": "test_ex4.cairo",
-  "ex5": "test_ex5.cairo",
-  "ex6": "test_ex6.cairo",
-  "ex7": "test_ex7.cairo"
+  "ex1": "test_ex1.cairo"
 }
