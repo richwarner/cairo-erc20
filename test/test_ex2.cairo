@@ -1,6 +1,6 @@
 %lang starknet
 
-from exercises.ex2 import addOne
+from exercises.cairo.ex2 import addOne
 
 
 @external

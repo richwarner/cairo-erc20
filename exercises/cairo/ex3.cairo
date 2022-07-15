@@ -1,7 +1,7 @@
 %lang starknet
 
 
-# Do and log some simple arithmetic
+# Do and print out some simple arithmetic
 func simpleMath():
     
     # adding 13 +  14

@@ -11,7 +11,7 @@ from starkware.cairo.common.math import unsigned_div_rem
 
 func pattern{bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(n: felt, idx: felt, exp: felt, broken_chain: felt) -> (true : felt):
 
-    alloc_locals          
+    alloc_locals              
 
     ## Get the digit with a fixed mask
     let (digit) = bitwise_and(1, n) 

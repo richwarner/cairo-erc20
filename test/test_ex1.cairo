@@ -1,6 +1,6 @@
 %lang starknet
 
-from exercises.ex1 import logValue
+from exercises.cairo.ex1 import logValue
 
 
 @external

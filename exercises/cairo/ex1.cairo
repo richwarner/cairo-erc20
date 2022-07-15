@@ -11,9 +11,9 @@ func logValue(y : felt):
 
 
    ## Solution
-   # %{ 
-   #    print(f"passed value: {ids.y}")      
-   # %}   
+   %{ 
+      print(f"passed value: {ids.y}")      
+   %}   
 
    return ()   
 end

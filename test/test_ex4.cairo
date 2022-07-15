@@ -1,6 +1,6 @@
 %lang starknet
 
-from exercises.ex4 import calculate_sum
+from exercises.cairo.ex4 import calculate_sum
 
 @external
 func test_calculate_sum{syscall_ptr : felt*, range_check_ptr}():

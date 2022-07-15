@@ -4,28 +4,44 @@ from starkware.cairo.common.bitwise import bitwise_and, bitwise_xor
 from starkware.cairo.common.cairo_builtins import BitwiseBuiltin, HashBuiltin
 
 
-@contract_interface
-namespace PatternContract: 
-    func pattern(n : felt) -> (true : felt):
-    end
-end
+from exercises.cairo.ex6 import pattern
 
 @external
-func test_proxy_contract{syscall_ptr : felt*, range_check_ptr}():
-    alloc_locals
-
-    local contract_address : felt
-
-    # We deploy contract and put its address into a local variable. Second argument is calldata array
-    %{ ids.contract_address = deploy_contract("./exercises/ex6.cairo").contract_address %}      
+func test_proxy_contract{syscall_ptr : felt*, range_check_ptr, bitwise_ptr: BitwiseBuiltin*}():
     
-    
-    let (p8) = PatternContract.pattern(contract_address=contract_address, n = 8)
+    alloc_locals             
 
-    ## Solution
-    %{ 
-        print(f"returned value: {ids.p8}")      
-    %}     
+    ## test nice numbers   
+    ################################################################################################
+    let (nice_pattern) = pattern(n = 170, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 1
+
+    let (nice_pattern) = pattern(n = 10, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 1    
+
+    let (nice_pattern) = pattern(n = 43690, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 1    
+
+    let (nice_pattern) = pattern(n = 1398101, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 1
+
+    ## test not-nice numbers   
+    ################################################################################################
+    let (nice_pattern) = pattern(n = 171, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 0
+
+    let (nice_pattern) = pattern(n = 11, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 0    
+
+    let (nice_pattern) = pattern(n = 43390, idx = 0, exp = 0, broken_chain = 0)
+    assert nice_pattern = 0
+
+    %{
+        if ids.nice_pattern == 1:
+            print(f"has nice pattern") 
+        else:
+            print(f"doesn't have a nice pattern")      
+    %}    
   
     return ()
 end
