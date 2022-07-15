@@ -8,7 +8,6 @@ const MINT_ADMIN = 0x00348f5537be66815eb7de63295fcb5d8b8b2ffe09bb712af4966db7cbb
 const TEST_ACC1 = 0x00348f5537be66815eb7de63295fcb5d8b8b2ffe09bb712af4966db7cbb04a95
 const TEST_ACC2 = 0x3fe90a1958bb8468fb1b62970747d8a00c435ef96cda708ae8de3d07f1bb56b
 
-
 @contract_interface
 namespace Erc20:
     func increase_balance(amount : Uint256):
@@ -20,7 +19,6 @@ namespace Erc20:
     func transfer(recipient: felt, amount: Uint256) -> (success: felt):
     end
 end
-
 
 
 @external
@@ -40,7 +38,10 @@ end
 
 ## Make it so transfer only works on multiples of 2
 @external
-func test_proxy_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+
+    %{print(f"\ntest_even_transfer") %}    
+
     alloc_locals
 
     tempvar contract_address
@@ -62,46 +63,57 @@ func test_proxy_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 
     %{ stop_prank_callable() %}    
 
+    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+    
+
     return ()
 end
 
 
-# @external
-# func test_proxy_contract2{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     alloc_locals
-
-#     local contract_address : felt
+@external
+func test_faucer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     
-#     ## Hardcoded don't change
-#     %{ ids.contract_address = deploy_contract("./exercises/contracts/erc20/erc20.cairo", [
-#         5338434412023108646027945078640, ## name:   CairoWorkshop
-#         17239,                           ## symbol: CW
-#         10000000000,                               ## initial_supply[1]: 10000000000
-#         0,                               ## initial_supply[0]: 0
-#         ids.MINT_ADMIN
-#         ]).contract_address 
-#     %}
+    alloc_locals
 
-#     ## Call as admin    
-#     %{stop_prank_callable = start_prank(ids.MINT_ADMIN, ids.contract_address)%}   
+    tempvar contract_address
+    %{ ids.contract_address = context.contract_a_address %}   
 
-#     ## Transfer even amount as mint owner to TEST_ACC1
-#     Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC1, amount = Uint256(666,0))    
+    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+    %{print(f"MINT_ADMIN BRUV account balance: {ids.admin_balance.low}") %}    
 
-#     ## Problem
-#     ################################################################################################
-#     %{ expect_revert() %}
-#     ################################################################################################
+    return ()
+end
 
-#     ## Transfer odd amount as mint owner to TEST_ACC1
-#     Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(111,0))    
 
-#     %{ stop_prank_callable() %}
+
+@external
+func test_proxy_contract3{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     
+    alloc_locals
 
-#     return ()
-# end
+    tempvar contract_address
+    %{ ids.contract_address = context.contract_a_address %}   
 
+    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+    %{print(f"MINT_ADMIN BOOOOO account balance: {ids.admin_balance.low}") %}    
+
+    return ()
+end
+
+
+@external
+func test_proxy_contract4{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    
+    alloc_locals
+
+    tempvar contract_address
+    %{ ids.contract_address = context.contract_a_address %}   
+
+    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+    %{print(f"MINT_ADMIN MAAAAAA account balance: {ids.admin_balance.low}") %}    
+
+    return ()
+end
 ## At the moment only minter can transfer make it so anyone can do it
 
 # @external
