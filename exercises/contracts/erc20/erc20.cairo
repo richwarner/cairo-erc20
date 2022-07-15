@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256, uint256_le
+from starkware.cairo.common.uint256 import Uint256, uint256_le, uint256_unsigned_div_rem, uint256_sub
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import unsigned_div_rem, assert_le_felt
 
@@ -28,7 +28,8 @@ from exercises.contracts.erc20.ERC20_base import (
     ERC20_increaseAllowance,
     ERC20_decreaseAllowance,
     ERC20_transfer,
-    ERC20_transferFrom
+    ERC20_transferFrom,
+    ERC20_burn
 )
 
 @constructor
@@ -43,6 +44,7 @@ func constructor{
         recipient: felt
     ):
     ERC20_initializer(name, symbol, initial_supply, recipient)
+    admin.write(recipient)
     return ()
 end
 
@@ -56,11 +58,32 @@ func name{
     return (name)
 end
 
-## permitted accounts (acc, bool)
+## Solution
+################################################################################################    
+# A mapping of permissions
 @storage_var
-func allowed(account : felt) -> (user_slots_storage : felt):
+func allowed(account : felt) -> (res : felt):
 end
+################################################################################################    
 
+
+## Solution
+################################################################################################    
+@storage_var
+func admin() -> (res : felt):
+end
+################################################################################################    
+
+## Solution
+################################################################################################   
+@view
+func get_admin{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    admin_address : felt
+):
+    let (admin_address) = admin.read()
+    return (admin_address)
+end
+################################################################################################   
 
 @view
 func symbol{
@@ -177,43 +200,45 @@ func approve{
 end
 
 
-
+## Solution
+################################################################################################    
 @external
-func request_allowlist{
+func request_whitelist{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }() -> (level_granted: felt):
     
-    let (caller) = get_caller_address()    
+    let (caller) = get_caller_address()        
     
-    ## 1 =  true
     allowed.write(caller, 1)
-
 
     let (level_granted) = allowed.read(caller)
     
     return (level_granted)
 end
+################################################################################################    
 
-
+## Solution
+################################################################################################    
 @external
-func allowlist_level{
+func check_whitelist{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }(account: felt) -> (allowed_v: felt):
-    
+    }(account: felt) -> (allowed_v: felt):    
 
     ## get int for that account
     let (allowed_v) = allowed.read(account)
 
     return (allowed_v)
 end
+################################################################################################    
 
 
+## Allows to get more than 10k but need to be on the whitelist
 @external
-func get_tokens{
+func exclusive_faucet{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
@@ -222,7 +247,7 @@ func get_tokens{
     let (caller) = get_caller_address()
     
     ## Retrieve permission
-    let (perm) = allowlist_level(caller)
+    let (perm) = check_whitelist(caller)
 
     ## Abort on lack of permission
     with_attr error_message("Not allowed"):
@@ -254,5 +279,38 @@ func decreaseAllowance{
     }(spender: felt, subtracted_value: Uint256) -> (success: felt):
     ERC20_decreaseAllowance(spender, subtracted_value)
     # Cairo equivalent to 'return (true)'
+    return (1)
+end
+
+
+@external
+func burn{
+        syscall_ptr : felt*, 
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr
+    }(amount: Uint256) -> (success: felt):   
+
+    ## Solution
+    ################################################################################################    
+    alloc_locals
+
+    ## get caller
+    let (caller) = get_caller_address()
+    
+    ## get admin
+    let (admin_address) = admin.read()    
+
+    ## work out the haircut of 10%
+    let (hair_cut, _) = uint256_unsigned_div_rem(amount, Uint256(10,0))
+
+    ## transfer haircut to the owner    
+    ERC20_transfer(admin_address, hair_cut)   
+
+    let (acc_burn) = uint256_sub(amount, hair_cut)
+
+    ## burn the rest     
+    ERC20_burn(caller, acc_burn)
+    ################################################################################################    
+    
     return (1)
 end

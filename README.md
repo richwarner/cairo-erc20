@@ -26,5 +26,6 @@ TODO: Add how to run
 2. Allowlist
 3. Only even transfer
 4. Approve
+5. Burn haircut
 
 ## Ideas ERC721
