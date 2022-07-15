@@ -54,7 +54,7 @@ func name{
     return (name)
 end
 
-## Solution
+## Solution exclusive_faucet
 ################################################################################################    
 # A mapping of permissions
 @storage_var
@@ -62,7 +62,7 @@ func allowed(account : felt) -> (res : felt):
 end
 ################################################################################################    
 
-## Solution
+## Solution burn_haircut
 ################################################################################################    
 @storage_var
 func admin() -> (res : felt):
