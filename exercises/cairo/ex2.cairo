@@ -8,7 +8,11 @@ from starkware.cairo.common.serialize import serialize_word
 func addOne(y : felt) -> (bit : felt):
 
    ## uncomment this
+
+   # Solution ex1
+   ################################################################################################
    return (y + 1)
+   ################################################################################################
 end
 
 

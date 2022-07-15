@@ -13,6 +13,9 @@ func pattern{bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(n: felt, idx: felt, 
 
     alloc_locals              
 
+    # Solution ex6
+    ################################################################################################
+
     ## Get the digit with a fixed mask
     let (digit) = bitwise_and(1, n) 
 
@@ -60,6 +63,7 @@ func pattern{bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(n: felt, idx: felt, 
     end       
     
     return (returned)
+    ################################################################################################
 end
 
 

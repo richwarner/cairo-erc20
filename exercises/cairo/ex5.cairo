@@ -3,7 +3,8 @@
 ## - 0 otherwise
 func abs_eq(x : felt, y : felt) -> (bit : felt):
 
-    # Solution
+    # Solution ex5
+    ################################################################################################
     if x == y:        
         return (bit=1)
     end
@@ -11,4 +12,5 @@ func abs_eq(x : felt, y : felt) -> (bit : felt):
         return (bit=1)
     end    
     return (bit=0)    
+    ################################################################################################
 end

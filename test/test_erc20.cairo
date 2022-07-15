@@ -11,26 +11,26 @@ const TEST_ACC2 = 0x3fe90a1958bb8468fb1b62970747d8a00c435ef96cda708ae8de3d07f1bb
 @contract_interface
 namespace Erc20:    
 
-    func faucet(amount : Uint256) -> (success: felt):
-    end
-
-    func exclusive_faucet(amount : Uint256) -> (success: felt):
-    end
-
     func balanceOf(account: felt) -> (res : Uint256):
     end
 
     func transfer(recipient: felt, amount: Uint256) -> (success: felt):
     end
 
+    func burn(amount: Uint256) -> (level_granted: felt):
+    end
+
+    func faucet(amount : Uint256) -> (success: felt):
+    end
+
+    func exclusive_faucet(amount : Uint256) -> (success: felt):
+    end
+
     func check_whitelist(account: felt) -> (allowed_v: felt): 
     end
 
     func request_whitelist() -> (level_granted: felt):
-    end
-
-    func burn(amount: Uint256) -> (level_granted: felt):
-    end
+    end    
 
     func get_admin() -> (admin_address: felt):
     end
@@ -102,6 +102,40 @@ func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 end
 
 @external
+func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+
+    alloc_locals
+
+    tempvar contract_address
+    %{ ids.contract_address = context.contract_a_address %}   
+
+    let (admin_address) = Erc20.get_admin(contract_address=contract_address)
+
+    ## Start admin balance
+    let (start_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)        
+
+    ## Call as test_acc1
+    %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
+
+    ## Get airdrop
+    Erc20.faucet(contract_address=contract_address, amount = Uint256(666,0))    
+
+    ## Call burn
+    Erc20.burn(contract_address=contract_address, amount = Uint256(500,0))    
+
+    %{ stop_prank_callable() %}   
+
+    ## Final admin balance
+    let (final_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)              
+    
+    ## Assert admin's balance increased by 50
+    let (admin_diff) = uint256_sub(final_admin_balance, start_admin_balance)
+    assert admin_diff.low = 50    
+
+    return ()
+end
+
+@external
 func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     
     alloc_locals
@@ -141,36 +175,3 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     return ()
 end
 
-@external
-func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-
-    alloc_locals
-
-    tempvar contract_address
-    %{ ids.contract_address = context.contract_a_address %}   
-
-    let (admin_address) = Erc20.get_admin(contract_address=contract_address)
-
-    ## Start admin balance
-    let (start_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)        
-
-    ## Call as test_acc1
-    %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
-
-    ## Get airdrop
-    Erc20.faucet(contract_address=contract_address, amount = Uint256(666,0))    
-
-    ## Call burn
-    Erc20.burn(contract_address=contract_address, amount = Uint256(500,0))    
-
-    %{ stop_prank_callable() %}   
-
-    ## Final admin balance
-    let (final_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)              
-    
-    ## Assert admin's balance increased by 50
-    let (admin_diff) = uint256_sub(final_admin_balance, start_admin_balance)
-    assert admin_diff.low = 50    
-
-    return ()
-end
