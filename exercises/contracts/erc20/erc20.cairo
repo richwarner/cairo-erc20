@@ -54,28 +54,6 @@ func name{
     return (name)
 end
 
-## Solution exclusive_faucet
-################################################################################################    
-# A mapping of permissions
-@storage_var
-func allowed(account : felt) -> (res : felt):
-end
-################################################################################################    
-
-## Solution burn_haircut
-################################################################################################    
-@storage_var
-func admin() -> (res : felt):
-end
-
-@view
-func get_admin{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    admin_address : felt
-):
-    let (admin_address) = admin.read()
-    return (admin_address)
-end
-################################################################################################   
 
 @view
 func symbol{
@@ -138,12 +116,6 @@ func transfer{
         range_check_ptr
     }(recipient: felt, amount: Uint256) -> (success: felt):
 
-    ## Solution even_transfer
-    ################################################################################################
-    let (q,r) = unsigned_div_rem(amount.low, 2)
-    assert r = 0
-    ################################################################################################
-
     ERC20_transfer(recipient, amount)    
     return (1)
 end
@@ -155,18 +127,12 @@ func faucet{
         range_check_ptr
     }(amount:Uint256) -> (success: felt):
 
-    ## Solution faucet
-    ################################################################################################    
-    uint256_le(amount, Uint256(10000,0))    
-    ################################################################################################
-
     let (caller) = get_caller_address()
     ERC20_mint(caller, amount)
     return (1)
 end
 
-## Solution burn_haircut
-################################################################################################    
+
 @external
 func burn{
         syscall_ptr : felt*, 
@@ -196,61 +162,3 @@ func burn{
     
     return (1)
 end
-################################################################################################    
-
-## Solution exclusive_faucet
-################################################################################################    
-@external
-func request_whitelist{
-        syscall_ptr : felt*, 
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr
-    }() -> (level_granted: felt):
-    
-    let (caller) = get_caller_address()        
-    
-    allowed.write(caller, 1)
-
-    let (level_granted) = allowed.read(caller)
-    
-    return (level_granted)
-end
- 
-@external
-func check_whitelist{
-        syscall_ptr : felt*, 
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr
-    }(account: felt) -> (allowed_v: felt):    
-
-    ## get int for that account
-    let (allowed_v) = allowed.read(account)
-
-    return (allowed_v)
-end
-
-@external
-func exclusive_faucet{
-        syscall_ptr : felt*, 
-        pedersen_ptr : HashBuiltin*,
-        range_check_ptr
-    }(amount: Uint256)  -> (success: felt):
-
-    alloc_locals
-        
-    let (caller) = get_caller_address()
-    
-    ## Retrieve permission
-    let (perm) = check_whitelist(caller)
-
-    ## Abort on lack of permission
-    with_attr error_message("Not allowed"):
-        assert_not_zero(perm)
-    end    
-
-    ERC20_mint(caller, amount)
-    return (success = 1)
-end
-################################################################################################    
-
-
