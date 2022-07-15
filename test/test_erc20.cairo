@@ -53,9 +53,7 @@ end
 
 ## Make it so transfer only works on multiples of 2
 @external
-func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-
-    %{print(f"\ntest_even_transfer") %}    
+func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():   
 
     alloc_locals
 
@@ -66,14 +64,10 @@ func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     %{stop_prank_callable = start_prank(ids.MINT_ADMIN, ids.contract_address)%}   
 
     ## Transfer even amount as mint owner to TEST_ACC1
-    Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC1, amount = Uint256(666,0))    
+    Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC1, amount = Uint256(666,0))       
 
-    ## Problem
-    ################################################################################################
+    ## Attempt to transfer an odd amount as mint owner to TEST_ACC1
     %{ expect_revert() %}
-    ################################################################################################
-
-    ## Transfer odd amount as mint owner to TEST_ACC1
     Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(111,0))    
     %{ stop_prank_callable() %}       
 
@@ -82,9 +76,7 @@ end
 
 ## Make a faucet that mints and transfers any value equal to or below 10,000
 @external
-func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    
-    %{print(f"\ntest_faucet") %}    
+func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():    
     
     alloc_locals
 
@@ -99,29 +91,15 @@ func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     %{ stop_prank_callable() %}   
 
     ## Call as test_acc2
-    %{stop_prank_callable = start_prank(ids.TEST_ACC2, ids.contract_address)%}   
+    %{stop_prank_callable = start_prank(ids.TEST_ACC2, ids.contract_address)%}       
 
-    ## Problem
-    ################################################################################################
-    %{ expect_revert() %}
-    ################################################################################################
-
-    ## Transfer odd amount as mint owner to TEST_ACC1
+    ## Attempt to get airdrop over the limit
+    %{ expect_revert() %}    
     Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(20000,0))    
     %{ stop_prank_callable() %}    
 
     return ()
 end
-
-
-## Create a storgae variable
-
-## Create a getter
-
-## Retrieve in faucet
-
-## Assert marked as allowed
-
 
 @external
 func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
@@ -132,11 +110,7 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     %{ ids.contract_address = context.contract_a_address %}   
 
     ## Start admin balance
-    let (start_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)    
-    %{print(f"Start admin balance: {ids.start_TEST_ACC1_balance.low}") %}  
-
-    ## Problem
-    ################################################################################################
+    let (start_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)        
 
     ## Call as test_acc1
     %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
@@ -155,13 +129,10 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 
     ## Call exclusive_faucet asking for more than 10,000
     let (allowed) = Erc20.exclusive_faucet(contract_address=contract_address, amount = Uint256(200000,0))        
-
     %{ stop_prank_callable() %}    
 
-
     ## Final admin balance
-    let (final_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)    
-    %{print(f"Start admin balance: {ids.final_TEST_ACC1_balance.low}") %}  
+    let (final_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)        
 
     ## Assert admin's balance increased by 50
     let (admin_diff) = uint256_sub(final_TEST_ACC1_balance, start_TEST_ACC1_balance)
@@ -169,9 +140,6 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 
     return ()
 end
-
-
-
 
 @external
 func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
@@ -184,8 +152,7 @@ func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     let (admin_address) = Erc20.get_admin(contract_address=contract_address)
 
     ## Start admin balance
-    let (start_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"Start admin balance: {ids.start_admin_balance.low}") %}  
+    let (start_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)        
 
     ## Call as test_acc1
     %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
@@ -199,13 +166,11 @@ func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     %{ stop_prank_callable() %}   
 
     ## Final admin balance
-    let (final_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"Final adimn balance: {ids.final_admin_balance.low}") %}        
+    let (final_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)              
     
     ## Assert admin's balance increased by 50
     let (admin_diff) = uint256_sub(final_admin_balance, start_admin_balance)
-    assert admin_diff.low = 50
-    
+    assert admin_diff.low = 50    
 
     return ()
 end
