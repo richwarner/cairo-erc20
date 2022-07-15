@@ -18,6 +18,7 @@ TODO: Add how to run
 1. Change dir name so its capital or different than the file
 2. Capitalise startr lines
 3. Do TODOs
+4. Revert to base imports
 
 ## Ideas ERC20
 

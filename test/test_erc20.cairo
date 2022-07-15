@@ -13,6 +13,9 @@ namespace Erc20:
     func increase_balance(amount : Uint256):
     end
 
+    func faucet(amount : Uint256) -> (success: felt):
+    end
+
     func balanceOf(account: felt) -> (res : Uint256):
     end
 
@@ -60,60 +63,77 @@ func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
 
     ## Transfer odd amount as mint owner to TEST_ACC1
     Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(111,0))    
+    %{ stop_prank_callable() %}       
 
+    return ()
+end
+
+## Make a faucet that mints and transfers any value equal to or below 10,000
+@external
+func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    
+    %{print(f"\ntest_faucet") %}    
+    
+    alloc_locals
+
+    tempvar contract_address
+    %{ ids.contract_address = context.contract_a_address %}   
+
+    ## Call as test_acc1
+    %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
+
+    ## Transfer even amount as mint owner to TEST_ACC1
+    Erc20.faucet(contract_address=contract_address, amount = Uint256(666,0))    
+    %{ stop_prank_callable() %}   
+
+    ## Call as test_acc2
+    %{stop_prank_callable = start_prank(ids.TEST_ACC2, ids.contract_address)%}   
+
+    ## Problem
+    ################################################################################################
+    %{ expect_revert() %}
+    ################################################################################################
+
+    ## Transfer odd amount as mint owner to TEST_ACC1
+    Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(20000,0))    
     %{ stop_prank_callable() %}    
 
-    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    
-
-    return ()
-end
-
-
-@external
-func test_faucer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    
-    alloc_locals
-
-    tempvar contract_address
-    %{ ids.contract_address = context.contract_a_address %}   
-
-    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"MINT_ADMIN BRUV account balance: {ids.admin_balance.low}") %}    
-
     return ()
 end
 
 
 
-@external
-func test_proxy_contract3{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+# @external
+# func test_proxy_contract3{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     
-    alloc_locals
+#     alloc_locals
 
-    tempvar contract_address
-    %{ ids.contract_address = context.contract_a_address %}   
+#     tempvar contract_address
+#     %{ ids.contract_address = context.contract_a_address %}   
 
-    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"MINT_ADMIN BOOOOO account balance: {ids.admin_balance.low}") %}    
+#     let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+#     %{print(f"MINT_ADMIN BOOOOO account balance: {ids.admin_balance.low}") %}    
 
-    return ()
-end
+#     return ()
+# end
 
 
-@external
-func test_proxy_contract4{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+# @external
+# func test_proxy_contract4{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     
-    alloc_locals
+#     alloc_locals
 
-    tempvar contract_address
-    %{ ids.contract_address = context.contract_a_address %}   
+#     tempvar contract_address
+#     %{ ids.contract_address = context.contract_a_address %}   
 
-    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"MINT_ADMIN MAAAAAA account balance: {ids.admin_balance.low}") %}    
+#     let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
+#     %{print(f"MINT_ADMIN MAAAAAA account balance: {ids.admin_balance.low}") %}    
 
-    return ()
-end
+#     return ()
+# end
+
+
+
 ## At the moment only minter can transfer make it so anyone can do it
 
 # @external

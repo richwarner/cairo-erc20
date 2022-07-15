@@ -1,9 +1,9 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256
+from starkware.cairo.common.uint256 import Uint256, uint256_le
 from starkware.starknet.common.syscalls import get_caller_address
-from starkware.cairo.common.math import unsigned_div_rem
+from starkware.cairo.common.math import unsigned_div_rem, assert_le_felt
 
 from starkware.cairo.common.math import (
     assert_not_zero,
@@ -121,11 +121,15 @@ func faucet{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }() -> (success: felt):
-    let amount: Uint256 = Uint256(100*1000000000000000000, 0)
+    }(amount:Uint256) -> (success: felt):
+
+    ## Solution
+    ################################################################################################    
+    uint256_le(amount, Uint256(10000,0))    
+    ################################################################################################
+
     let (caller) = get_caller_address()
     ERC20_mint(caller, amount)
-    # Cairo equivalent to 'return (true)'
     return (1)
 end
 
