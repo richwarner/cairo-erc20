@@ -6,9 +6,9 @@ Open shell and run:
 
 `curl -L https://raw.githubusercontent.com/software-mansion/protostar/master/install.sh | bash`
 
-Ensure your profile file has protostar included.
+Ensure your profile file has protostar path included.
 
-For me it added it to added it manually.
+For me installation script failed at it and it had to be added manually.
 
 Open bash configuration file by running:
 
@@ -34,37 +34,37 @@ So running example 1 would be:
 
 `protostar test test/test_ex1.cairo`
 
-All tests should pass without any modifaction of the tests files.
+**All tests should pass without any modification of the test files.**
 
-You **MUST** only modify the `.cairo` files in the `/exercises/` directory.
+**Hence you must only modify the `.cairo` files in the `/exercises/` directory.**
 
 # ERC20 contract
 
-This is a contractr that inherits from the base ERC20 implementation.
+This is a contract that inherits from the base ERC20 implementation.
 
-There are several features that need to be added to improve it.
+Several features need to be added to improve existing functionality.
 
 Tests will run against any implementations.
 
-To run the test file invoke:
+To run the test file, invoke:
 
 `protostar test test/test_erc20.cairo`
 
-Since nothing is done, hopefully all tests will fail.
+Since nothing is done, hopefully, all tests will fail.
 
 You should modify **ONLY** the file `erc20.cairo` in `exercises/contracts/`.
 
-If feature is complete run again
+If a feature is complete, run again to see test output:
 
 `protostar test test/test_erc20.cairo`
 
-Functions that need to be implemnted are specified in the `@contract_interface` in `test_erc20.cairo`.
+Functions that need to be implemented are specified in the `@contract_interface` in `test_erc20.cairo`.
 
 ## Features to implement
 
 ### Even transfer
 
-Already implemted `transfer()` is a bit boring so modify such that it only allows transfers of even amounts of Erc20.
+Already implemented `transfer()` is a bit boring so modify such that it only allows for transfers of even amounts of Erc20.
 
 ### Faucet
 
@@ -80,7 +80,7 @@ Sometimes tokens need to be burned, but there is no reason not to keep some as t
 
 Implement a funcion `burn()` that will:
 
-- take 10% of the amount to be burned and send to the address of the deployer/admin
+- take 10% of the amount to be burned and send it to the address of the deployer/admin
 - burn the rest
 
 ### Exclusive faucet
@@ -89,11 +89,11 @@ You need to implement three functions:
 
 #### `request_whitelist()`
 
-This function will set in the mapping (which needs to be implemented using the `@storage_var` decorator) value of 1 for any address that requests whitelisting
+This function will set in the mapping (which needs to be implemented using the `@storage_var` decorator) value of 1 for any address that requests whitelisting.
 
 #### `check_whitelist()`
 
-This function will check whether provided address has been whitelisted and will return:
+This function will check whether the provided address has been whitelisted and will return:
 
 - 1 if the caller has been whitelisted
 - 0 if the caller has not been whitelisted
@@ -109,10 +109,3 @@ There is a file `conversion.py` in the root directory that allows for easy conve
 To use interactively run:
 
 `python3 -i conversion.py`
-
-# TODO
-
-1. Change dir name so its capital or different than the file
-2. Capitalise startr lines
-3. Do TODOs
-4. Revert to base imports
