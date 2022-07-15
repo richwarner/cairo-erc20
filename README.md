@@ -1,6 +1,6 @@
 # Installing protostar
 
-## Unix
+# Unix
 
 Open shell and run:
 
@@ -101,6 +101,14 @@ This function will check whether provided address has been whitelisted and will 
 #### `exclusive_faucet()`
 
 This function will accept an amount to be minted, it will then check if the caller has been whitelisted using `check_whitelist()`. If the caller has been whitelisted it will mint any amount that the caller asks for.
+
+# Conversion helper
+
+There is a file `conversion.py` in the root directory that allows for easy conversion between felt and strings and numbers and uint256.
+
+To use interactively run:
+
+`python3 -i conversion.py`
 
 # TODO
 
