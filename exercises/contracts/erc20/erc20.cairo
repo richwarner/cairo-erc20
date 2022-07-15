@@ -242,7 +242,9 @@ func exclusive_faucet{
         syscall_ptr : felt*, 
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
-    }() -> (amount: Uint256):
+    }(amount: Uint256)  -> (success: felt):
+
+    alloc_locals
         
     let (caller) = get_caller_address()
     
@@ -252,12 +254,10 @@ func exclusive_faucet{
     ## Abort on lack of permission
     with_attr error_message("Not allowed"):
         assert_not_zero(perm)
-    end
-
-    let amount: Uint256 = Uint256(10,0)
+    end    
 
     ERC20_mint(caller, amount)
-    return (amount)
+    return (success = 1)
 end
 
 @external

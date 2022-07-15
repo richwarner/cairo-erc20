@@ -9,9 +9,7 @@ const TEST_ACC1 = 0x00348f5537be66815eb7de63295fcb5d8b8b2ffe09bb712af4966db7cbb0
 const TEST_ACC2 = 0x3fe90a1958bb8468fb1b62970747d8a00c435ef96cda708ae8de3d07f1bb56b
 
 @contract_interface
-namespace Erc20:
-    func increase_balance(amount : Uint256):
-    end
+namespace Erc20:    
 
     func faucet(amount : Uint256) -> (success: felt):
     end
@@ -133,6 +131,10 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     tempvar contract_address
     %{ ids.contract_address = context.contract_a_address %}   
 
+    ## Start admin balance
+    let (start_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)    
+    %{print(f"Start admin balance: {ids.start_TEST_ACC1_balance.low}") %}  
+
     ## Problem
     ################################################################################################
 
@@ -147,15 +149,23 @@ func test_exclusive_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let (apply) = Erc20.request_whitelist(contract_address=contract_address)        
     assert apply = 1
 
-
     ## Ensure TEST_ACC1 is now on the whitelist by defualt
     let (allowed) = Erc20.check_whitelist(contract_address=contract_address, account = TEST_ACC1)        
     assert allowed = 1
 
+    ## Call exclusive_faucet asking for more than 10,000
+    let (allowed) = Erc20.exclusive_faucet(contract_address=contract_address, amount = Uint256(200000,0))        
+
     %{ stop_prank_callable() %}    
 
-    let (admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"MINT_ADMIN BOOOOO account balance: {ids.admin_balance.low}") %}    
+
+    ## Final admin balance
+    let (final_TEST_ACC1_balance) = Erc20.balanceOf(contract_address=contract_address, account = TEST_ACC1)    
+    %{print(f"Start admin balance: {ids.final_TEST_ACC1_balance.low}") %}  
+
+    ## Assert admin's balance increased by 50
+    let (admin_diff) = uint256_sub(final_TEST_ACC1_balance, start_TEST_ACC1_balance)
+    assert admin_diff.low = 200000   
 
     return ()
 end
@@ -190,11 +200,10 @@ func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 
     ## Final admin balance
     let (final_admin_balance) = Erc20.balanceOf(contract_address=contract_address, account = MINT_ADMIN)    
-    %{print(f"Final adimn balance: {ids.final_admin_balance.low}") %}    
-
-    let (admin_diff) = uint256_sub(final_admin_balance, start_admin_balance)
+    %{print(f"Final adimn balance: {ids.final_admin_balance.low}") %}        
     
     ## Assert admin's balance increased by 50
+    let (admin_diff) = uint256_sub(final_admin_balance, start_admin_balance)
     assert admin_diff.low = 50
     
 
