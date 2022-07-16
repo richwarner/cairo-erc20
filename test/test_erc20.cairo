@@ -51,7 +51,6 @@ func __setup__():
     return ()
 end
 
-## Make it so transfer only works on multiples of 2
 @external
 func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():   
 
@@ -74,7 +73,6 @@ func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     return ()
 end
 
-## Make a faucet that mints and transfers any value equal to or below 10,000
 @external
 func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():    
     
