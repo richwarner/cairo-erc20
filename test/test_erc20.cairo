@@ -86,16 +86,16 @@ func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     ## Call as test_acc1
     %{stop_prank_callable = start_prank(ids.TEST_ACC1, ids.contract_address)%}   
 
-    ## Transfer even amount as mint owner to TEST_ACC1
+    ## Get airdrop under limit
     Erc20.faucet(contract_address=contract_address, amount = Uint256(666,0))    
     %{ stop_prank_callable() %}   
 
     ## Call as test_acc2
     %{stop_prank_callable = start_prank(ids.TEST_ACC2, ids.contract_address)%}       
 
-    ## Attempt to get airdrop over the limit
+    ## Get airdrop over limit
     %{ expect_revert() %}    
-    Erc20.transfer(contract_address=contract_address, recipient = TEST_ACC2, amount = Uint256(20000,0))    
+    Erc20.faucet(contract_address=contract_address, amount = Uint256(1000000,0))    
     %{ stop_prank_callable() %}    
 
     return ()
@@ -121,8 +121,7 @@ func test_burn_haircut{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     Erc20.faucet(contract_address=contract_address, amount = Uint256(666,0))    
 
     ## Call burn
-    Erc20.burn(contract_address=contract_address, amount = Uint256(500,0))    
-
+    Erc20.burn(contract_address=contract_address, amount = Uint256(500,0)) 
     %{ stop_prank_callable() %}   
 
     ## Final admin balance
