@@ -39,8 +39,7 @@ func constructor{
         initial_supply: Uint256,
         recipient: felt
     ):
-    ERC20_initializer(name, symbol, initial_supply, recipient)
-    admin.write(recipient)
+    ERC20_initializer(name, symbol, initial_supply, recipient)    
     return ()
 end
 
@@ -139,26 +138,6 @@ func burn{
         pedersen_ptr : HashBuiltin*,
         range_check_ptr
     }(amount: Uint256) -> (success: felt):   
-
     
-    alloc_locals
-
-    ## get caller
-    let (caller) = get_caller_address()
-    
-    ## get admin
-    let (admin_address) = admin.read()    
-
-    ## work out the haircut of 10%
-    let (hair_cut, _) = uint256_unsigned_div_rem(amount, Uint256(10,0))
-
-    ## transfer haircut to the owner    
-    ERC20_transfer(admin_address, hair_cut)   
-
-    let (acc_burn) = uint256_sub(amount, hair_cut)
-
-    ## burn the rest     
-    ERC20_burn(caller, acc_burn)   
-    
-    return (1)
+    return (0)
 end

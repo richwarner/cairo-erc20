@@ -2,8 +2,6 @@
 from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.bitwise import bitwise_and, bitwise_xor
 from starkware.cairo.common.cairo_builtins import BitwiseBuiltin, HashBuiltin
-
-
 from exercises.cairo.ex6 import pattern
 
 @external
@@ -36,12 +34,5 @@ func test_proxy_contract{syscall_ptr : felt*, range_check_ptr, bitwise_ptr: Bitw
     let (nice_pattern) = pattern(n = 43390, idx = 0, exp = 0, broken_chain = 0)
     assert nice_pattern = 0
 
-    %{
-        if ids.nice_pattern == 1:
-            print(f"has nice pattern") 
-        else:
-            print(f"doesn't have a nice pattern")      
-    %}    
-  
     return ()
 end

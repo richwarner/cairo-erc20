@@ -1,7 +1,5 @@
-%lang starknet
-
-## Calculate the triangular number of any value provided
+## Return summation of every number below and including n
 func calculate_sum(n : felt) -> (sum : felt):
-    return ()
+    return (1)
 end
 

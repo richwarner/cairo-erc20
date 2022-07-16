@@ -6,12 +6,12 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem
 
 ## Using binary operations return: 
-## - 1 when pattern of the digit is 01010101 from LSB to the latest 1, but accounts for trailing zeros
+## - 1 when the pattern of bits is alternating, excluding leading zeros
 ## - 0 otherwise
 
 func pattern{bitwise_ptr: BitwiseBuiltin*, range_check_ptr}(n: felt, idx: felt, exp: felt, broken_chain: felt) -> (true : felt):
 
-    return ()
+    return (0)
 end
 
 

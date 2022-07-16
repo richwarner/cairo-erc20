@@ -1,5 +1,4 @@
 %lang starknet
-
 from exercises.cairo.ex4 import calculate_sum
 
 @external

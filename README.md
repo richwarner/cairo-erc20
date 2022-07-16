@@ -70,7 +70,7 @@ Already implemented `transfer()` is a bit boring so modify such that it only all
 
 Users may require some of the test tokens for development.
 
-Implement a funcion `faucet()` that will hand out a number of tokens to the caller.
+Implement function `faucet()` that will mint specified amount to the caller.
 
 As tokens are (potentially) valuable, cap the maximum amount to be minted and transfered per invocation to 10,000.
 
@@ -85,7 +85,9 @@ Implement a funcion `burn()` that will:
 
 ### Exclusive faucet
 
-You need to implement three functions:
+Implement a faucet that will allow to mint any amount of tokens, but only to an exclusive list.
+
+To do that three functions are needed:
 
 #### `request_whitelist()`
 
@@ -104,8 +106,8 @@ This function will accept an amount to be minted, it will then check if the call
 
 # Conversion helper
 
-There is a file `conversion.py` in the root directory that allows for easy conversion between felt and strings and numbers and uint256.
+File `conversion.py` in the root directory can be used for conversion between felt and strings and numbers and uint256.
 
-To use interactively run:
+To use that helper iteratively interactively run:
 
 `python3 -i conversion.py`

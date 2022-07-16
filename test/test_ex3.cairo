@@ -1,5 +1,4 @@
 %lang starknet
-
 from exercises.cairo.ex3 import simpleMath
 
 @external

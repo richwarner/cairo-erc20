@@ -1,5 +1,4 @@
 %lang starknet
-
 from exercises.cairo.ex5 import abs_eq
 
 @external
