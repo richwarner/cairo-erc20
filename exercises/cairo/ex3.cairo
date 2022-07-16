@@ -1,6 +1,5 @@
 %lang starknet
 
-
 # Do and print out some simple arithmetic
 func simpleMath():
     
