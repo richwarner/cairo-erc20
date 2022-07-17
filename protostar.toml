@@ -6,5 +6,5 @@ libs_path = "cairoWorkShop"
 
 ["protostar.contracts"]
 main = [
-    "exercises/main.cairo",
+    "exercises/contracts/erc20/erc20.cairo",
 ]
