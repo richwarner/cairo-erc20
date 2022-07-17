@@ -1,7 +1,9 @@
 %lang starknet
 
 from starkware.cairo.common.bitwise import bitwise_and, bitwise_xor
-from starkware.cairo.common.cairo_builtins import BitwiseBuiltin, HashBuiltin
+from starkware.cairo.common.cairo_builtins import BitwiseBuiltin
+from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.math import unsigned_div_rem
 
 ## Using binary operations return: 
 ## - 1 when the pattern of bits is alternating, excluding leading zeros

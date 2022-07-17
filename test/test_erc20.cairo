@@ -8,33 +8,7 @@ const MINT_ADMIN = 0x00348f5537be66815eb7de63295fcb5d8b8b2ffe09bb712af4966db7cbb
 const TEST_ACC1 = 0x00348f5537be66815eb7de63295fcb5d8b8b2ffe09bb712af4966db7cbb04a95
 const TEST_ACC2 = 0x3fe90a1958bb8468fb1b62970747d8a00c435ef96cda708ae8de3d07f1bb56b
 
-@contract_interface
-namespace Erc20:    
-
-    func balanceOf(account: felt) -> (res : Uint256):
-    end
-
-    func transfer(recipient: felt, amount: Uint256) -> (success: felt):
-    end
-
-    func burn(amount: Uint256) -> (level_granted: felt):
-    end
-
-    func faucet(amount : Uint256) -> (success: felt):
-    end
-
-    func exclusive_faucet(amount : Uint256) -> (success: felt):
-    end
-
-    func check_whitelist(account: felt) -> (allowed_v: felt): 
-    end
-
-    func request_whitelist() -> (level_granted: felt):
-    end    
-
-    func get_admin() -> (admin_address: felt):
-    end
-end
+from exercises.contracts.erc20.IERC20 import IErc20 as Erc20
 
 @external
 func __setup__():
@@ -51,7 +25,6 @@ func __setup__():
     return ()
 end
 
-## Make it so transfer only works on multiples of 2
 @external
 func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():   
 
@@ -74,7 +47,6 @@ func test_even_transfer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     return ()
 end
 
-## Make a faucet that mints and transfers any value equal to or below 10,000
 @external
 func test_faucet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():    
     

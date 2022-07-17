@@ -1,4 +1,4 @@
-# Perform and log output some simple arithmetic
+# Do and print out some simple arithmetic
 func simpleMath():
     
     # adding 13 +  14
